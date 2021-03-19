@@ -1,7 +1,7 @@
 {
 	"manifest_version": 1,
 	"name": "GeoGooMax",
-	"description": "smart google find geo check",
+	"description": "Selecting a specified location to Google result page",
 	"version": "1.0.0",
 	"manifest_version": 2,
 	"icons": {
