@@ -37,10 +37,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	        });
 	        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 	        	let currentTab = tabs[0];
-		        chrome.runtime.sendMessage({
-				    'title': 'openSwitch',
-				    'body': { 'tab': currentTab }
-				});
+		        chrome.tabs.reload();
 	        });
 
 		});
@@ -51,10 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	        });
 	        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 	        	let currentTab = tabs[0];
-		        chrome.runtime.sendMessage({
-				    'title': 'openSwitch',
-				    'body': { 'tab': currentTab }
-				});
+		        chrome.tabs.reload();
 	        });
 
 		});
@@ -65,10 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	        });
 	        chrome.tabs.query({ active: true, currentWindow: true }, function(tabs){
 	        	let currentTab = tabs[0];
-		        chrome.runtime.sendMessage({
-				    'title': 'openSwitch',
-				    'body': { 'tab': currentTab }
-				});
+		        chrome.tabs.reload();
 	        });
 
 		});

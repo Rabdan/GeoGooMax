@@ -242,7 +242,7 @@ var BG_FUNCT = (function(){
         	    let additionalParameters = '';
                 if( settings.switch_lng ) {
                     let lcode = DATA.LangCodes[ncode];
-                    console.log(lcode);
+//                    console.log(lcode);
                     if( lcode ) {
                         additionalParameters = "&hl=" + lcode.languages[0];
                     }
@@ -307,6 +307,7 @@ var BG_FUNCT = (function(){
         url = BG_FUNCT.removeURLParameter(url,"geomaxim");
         url = BG_FUNCT.removeURLParameter(url,"ip");
         url = BG_FUNCT.removeURLParameter(url,"source_ip");
+        url = BG_FUNCT.removeURLParameter(url,"pws");
         url = BG_FUNCT.removeURLParameter(url,"hl");
         url = BG_FUNCT.removeURLParameter(url,"cr");
 
@@ -318,7 +319,7 @@ var BG_FUNCT = (function(){
 
 
 STORAGE_SINGLETON.updateStorageVariable(function(items){
-    console.log('items', items);
+//    console.log('items', items);
 
     if(SETTINGS.getSetting({setting : 'switch_on'}) === undefined){
         SETTINGS.saveSetting({
@@ -409,28 +410,6 @@ chrome.runtime.onMessage.addListener(function(response, sender, sendResponse) {
     else if(title == 'savePlace' && body) {
         BG_FUNCT.savePlace(body);
     }
-    else if(title == 'openPlace' && body ) {
-//    	console.log('sender',sender);
-        BG_FUNCT.createURL({
-            url: sender.tab.url,
-        	callback: function (newUrl) {
-                if (newUrl) {
-                    chrome.tabs.update(sender.tab.id, {"url": newUrl});
-                }
-            }
-        });   	
-    }
-    else if(title == 'openSwitch' && body) {
-//    	console.log('sender',body);
-        BG_FUNCT.createURL({
-            url: body.tab.url,
-        	callback: function (newUrl) {
-                if (newUrl) {
-                    chrome.tabs.update(body.tab.id, {"url": newUrl});
-                }
-            }
-        });  
-    }
     else if(title == 'saveSetting' && body) {
         SETTINGS.saveSetting({
             setting : body.setting,
@@ -440,11 +419,69 @@ chrome.runtime.onMessage.addListener(function(response, sender, sendResponse) {
 
 });
 
+chrome.webRequest.onBeforeRequest.addListener(
+    function(details) {
+        let settings = SETTINGS.getSettings();
+        let url = details.url;
+        if( settings 
+            && url.match("^http(s|)://www.google.[^/]+/search") 
+        ){
+            if( settings.switch_on && settings.currentGoogleRegion ) {
+                let ncode = settings.currentGoogleRegion.code;
+
+                let canonical = settings.currentGoogleRegion.place;
+
+                const symbol = DATA.symbolsByLength[canonical.length];
+                const base64 = btoa(canonical.replace(new RegExp("–", "g"), "-"));
+                let targetString = "w+CAIQICI" + symbol + base64;
+
+                let countryUrl = DATA.countryUrls["COM"];
+
+        //        console.log('countryUrl',options.queryWords);
+
+                let additionalParameters = '';
+                if( settings.switch_lng ) {
+                    let lcode = DATA.LangCodes[ncode];
+//                    console.log(lcode);
+                    if( lcode ) {
+                        additionalParameters = "&hl=" + lcode.languages[0];
+                    }
+                }
+                if( settings.switch_obr ) {
+                    additionalParameters = additionalParameters + "&cr=country" + ncode;
+                    countryUrl = DATA.countryUrls[ncode];
+                    if(!countryUrl) countryUrl = DATA.countryUrls["COM"];
+                }
+
+                let q = url.match("[#&\?]q=([^&]+)");
+
+                url = countryUrl + "/search?q="+ q[1] +
+                    "&geomaxim=1&pws=0&uule=" + targetString + additionalParameters + "&ip=0.0.0.0&source_ip=0.0.0.0";
+
+                return {
+                    redirectUrl: url
+                };
+
+            } else {
+                if( url.match("[&\?]geomaxim=([^&]+)") ) {
+                    url = BG_FUNCT.removeURLParameters(url);            
+                    return {
+                        redirectUrl: url
+                    };
+                }
+
+            }
+        }       
+    },
+    { urls: DATA.urlPatterns },
+    ["blocking"]
+);
+
 chrome.tabs.onUpdated.addListener(function(tabId, tab, tabInfo){
     if(tabInfo.status == "complete") {
     	const settings = SETTINGS.getSettings();
         if (
-            tabInfo.url.match("^https://www.google\.")
+            tabInfo.url.match("^http(s|)://www.google.[^/]+/search")
         ) {
             chrome.tabs.sendMessage(
                 tabId,

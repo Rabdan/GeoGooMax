@@ -94,15 +94,7 @@ var MAX_GEO_MENU = (function(){
 			                value : {"place" : place, "text" : text, "code" : code}
 			            }
 			        });
-
-			        let match = window.location.href.match(new RegExp('[\?&]q=([^&]+)', 'i'));
-	        		let tbm = window.location.href.match("[&\?]tbm=([^&]+)");
-					tbm = tbm ? tbm[1] : null;
-
-	                chrome.runtime.sendMessage({
-	                    'title': 'openPlace',
-	                    'body' : {"place" : place, "code" : code, "queryWords" : match[1], "tbm" : tbm}
-	                });
+                    document.location.reload();
 	            });
 
             });
@@ -189,17 +181,7 @@ var MAX_GEO_MENU = (function(){
 					                value : {"place" : place, "text" : this.innerHTML, "code" : code }
 					            }
 					        });
-
-					        let match = window.location.href.match(new RegExp('[\?&]q=([^&]+)', 'i'));
-			        		let tbm = window.location.href.match("[&\?]tbm=([^&]+)");
-							tbm = tbm ? tbm[1] : null;
-
-			                chrome.runtime.sendMessage({
-			                    'title': 'openPlace',
-			                    'body' : {"place" : place, "code" : code, "queryWords" : match[1] }
-			                });
-
-		//		        	chrome.tabs.update({url: window.location.href});
+                            document.location.reload();
 				    	});
 		            });
 
@@ -237,7 +219,7 @@ var MAX_GEO_MENU = (function(){
             });
 
             const foot = document.getElementById("gc9Iqb");
-            if( foot ) {
+            if( foot && window.location.href.match("[&\?]geomaxim=([^&]+)") ) {
             	foot.innerHTML = 'GeoGooMax';
             }
 
