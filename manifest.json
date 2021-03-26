@@ -18,9 +18,14 @@
     	"persistent": true,
     	"scripts": ["js/data.js", "js/settings.js", "js/background.js"]
   	},
-   	"permissions": [ "*://*/*", "storage", "tabs", "contextMenus", "geolocation", "notifications", "webRequest", "webRequestBlocking" ],
+   	"permissions": [ 
+            "tabs", 
+            "webRequest", 
+            "webRequestBlocking", 
+            "*://*.google.*/*" 
+      ],
    	"content_scripts": [
-       {
+            {
       		"matches": [ "*://www.google.com/*", 
       					 "*://www.google.ac/*", 
       					 "*://www.google.ad/*", 
