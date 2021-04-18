@@ -8,4 +8,4 @@ Plugin for google search page views from specified location. Supports the choice
 ![image](https://user-images.githubusercontent.com/24598025/111574458-d840f000-87ef-11eb-8bae-62182f3addc7.png)
 
 
-To install the extension, you need to set it in developer mode in the chrome extensions settings.
+To install the extension, https://chrome.google.com/webstore/detail/geogoomax/momcaelpaffncnajjocoalbkidggebkj
